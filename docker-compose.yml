@@ -1,0 +1,52 @@
+# Ce fichier docker compose contient les dépendances qui sont utilisées par la partie dev et la partie prod de l'application.
+# Il est utilisé pour éviter les duplications dans les fichiers docker-compose.dev.yml et docker-compose.prod.yml
+# On peut mettre en marche plusieurs conteneurs avec l'option --scale
+# Exemple : docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d --scale free-code-camp-app=2
+
+version: '3'
+services:
+  # nginx nous servira à rediriger les requêtes et à faire du load balancing
+  nginx:
+    image: nginx:stable-alpine
+    # On monte le fichier de configuration nginx dans le conteneur depuis notre dossier local
+    # Ce fichier ne doit jamais pouvoir être modifié par le conteneur, c'est pourquoi on le monte en lecture seule (:ro)
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+
+  free-code-camp-app:
+    build: .
+    environment:
+      - PORT=3000
+    # Nous souhaitons que le conteneur mongo-db soit lancé avant le conteneur free-code-camp-app car l'application a besoin de la base de données pour fonctionner
+    # On veut que le conteneur mongo-db fonctionne avant de lancer le conteneur free-code-camp-app
+    # On va donc utiliser la propriété depends_on, cette propriété permet de définir des dépendances entre les conteneurs
+    depends_on:
+      - mongo-db
+  # Définition de la base de donnée souhaitée
+  mongo-db:
+    # Récupération de l'image mongo depuis docker hub
+    image: mongo
+    # Variables d'environnement pour la base de donnée avec un nom d'utilisateur et un mot de passe
+    # Lorsque l'on rentre dans le container mongo, on peut se connecter à la base de donnée avec ces identifiants
+    # Command pour rentrer dans le container mongo : docker exec -it nom-du-conteneur bash
+    # la commande est la suivante : mongo -u admin -p password
+    # Commandes mongo:
+    # show dbs : affiche les bases de données
+    # use nom-de-la-base-de-donnée : permet de se connecter à la base de donnée
+    # show collections : affiche les collections de la base de donnée
+    # db.nom-de-la-collection.find() : affiche les données de la collection
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=password
+
+    volumes:
+      # Pour trouver quel dossier il faut mettre dans le volume, la documentation de l'image mongo est disponible sur docker hub
+      # url : https://hub.docker.com/_/mongo dans la rubrique "Where to Store Data"
+      # On va nommer le volume mongo-db, le nom se trouve avant les deux points
+      - mongo-db:/data/db
+  
+  redis:
+    image: redis
+# Déclaration des volumes nommés, les volumes nommés doivent être déclarés en dehors des services et il est nécessaire de les déclarer pour qu'ils fonctionnent
+volumes:
+  mongo-db:

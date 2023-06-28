@@ -1,0 +1,21 @@
+# Fichier docker-compose pour la production
+# il faudra compléter la commande à éxécuter pour les fichers docker-compose.yml et docker-compose.prod.yml, l'un à la suite de l'autre
+# Le fichier docker-compose.prod.yml est le fichier qui sera éxécuté en premier et contient la majorité de la configuration nécessaire
+# la command sera comme suit: docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+# ici le -f représente le fichier à éxécuter
+
+version: '3'
+services:
+  nginx:
+    ports:
+      - 80:80
+  free-code-camp-app:
+    build:
+      # on précise le dossier où se trouve le dockerfile
+      context: .
+      # On précise l'argument à passer au dockerfile
+      args:
+        NODE_ENV: production
+    environment:
+      - NODE_ENV=production
+    command: npm start

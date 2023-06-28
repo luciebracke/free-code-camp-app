@@ -1,0 +1,47 @@
+#Fichier docker-compose pour le developpement
+# il faudra compléter la commande à éxécuter pour les fichers docker-compose.yml et docker-compose.prod.yml, l'un à la suite de l'autre
+# la command sera comme suit: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+# ici le -f représente le fichier à éxécuter
+
+version: '3'
+services:
+  nginx:
+    # On redirigera les requêtes seulement vers le serveur nginx car il se chargera du load balancing vers les autres conteneurs, son conteneur écoute sur le port 80
+    ports:
+      - 3000:80
+  free-code-camp-app:
+    build:
+      # on précise le dossier où se trouve le dockerfile
+      context: .
+      # On précise l'argument à passer au dockerfile
+      args:
+        NODE_ENV: development
+    volumes:
+      #Ce volume est "bindé", on le reconnaît car on donne le chemin du dossier et le chemin du dossier dans le container séparé par deux points
+      - ./:/app
+      # on précise ce dossier pour éviter de l'overrider
+      # ce volume est anonyme, on le reconnaît car on ne donne que le chemin du dossier dans le container
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - MONGO_USER=admin
+      - MONGO_PASSWORD=password
+      - SESSION_SECRET=secret
+    # commande pour lancer le serveur en mode dev, cette commande sera prioritaire à la commande se trouvant dans le dockerfile
+    command: npm run dev
+    
+  mongo-db:
+    # Récupération de l'image mongo depuis docker hub
+    image: mongo
+    # Variables d'environnement pour la base de donnée avec un nom d'utilisateur et un mot de passe
+    # Lorsque l'on rentre dans le container mongo, on peut se connecter à la base de donnée avec ces identifiants
+    # Command pour rentrer dans le container mongo : docker exec -it nom-du-conteneur bash
+    # la commande est la suivante : mongo -u admin -p password
+    # Commandes mongo:
+    # show dbs : affiche les bases de données
+    # use nom-de-la-base-de-donnée : permet de se connecter à la base de donnée
+    # show collections : affiche les collections de la base de donnée
+    # db.nom-de-la-collection.find() : affiche les données de la collection
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=password

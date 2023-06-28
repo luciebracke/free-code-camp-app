@@ -1,0 +1,39 @@
+# documentation sur docker compose:
+# https://docs.docker.com/compose/compose-file/
+
+# Les fichiers docker-compose évitent de devoir taper des commandes docker à la main pour créer des conteneurs
+# le fichier docker compose évite également de recréer des images à partir de dockerfile car il regarde si l'image existe déjà par contre il ne la prend pas en compte si elle a été modifiée
+# il est cependant possible de lui demander de la recréer
+
+# commande de lancement du conteneur associé au docker-compose: docker-compose up
+# commande de lancement du conteneur associé au docker-compose en mode détaché: docker-compose up -d
+# commande pour arrêter le conteneur associé au docker-compose: docker-compose down
+# commande pour arrêter le conteneur associé au docker-compose et supprimer les volumes: docker-compose down -v
+# commande pour mettre l'image à jour avant de lancer le conteneur associé au docker-compose: docker-compose up --build
+
+# version prise en compte dans le docker compose
+version: '3'
+# Les services sont en fait les conteneurs qui seront créés
+services:
+  # premier conteneur
+  # nom du conteneur
+  free-code-camp-app:
+    # ici on va spécifier l'image qui sera utilisée pour créer le conteneur
+    # on va utiliser l'image créée à partir du dockerfile 
+    # Le chemin spécifié ici doit dépendre de l'endroit où se trouve le dockerfile
+    build: .
+    # on va spécifier le port sur lequel le conteneur va écouter
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./:/app
+      # on précise ce dossier pour éviter de l'overrider
+      - /app/node_modules
+    # Spécifications des variables d'environnement
+    environment:
+      - PORT=3000
+    # ou on spécifie un dossier qui contient les variables en question
+    # env_file:
+    # - ./.env
+
+
