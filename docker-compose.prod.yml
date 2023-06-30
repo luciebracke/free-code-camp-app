@@ -41,3 +41,16 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+
+# Etapes pour pousser notre image sur docker hub
+# 1- Créer un compte sur docker hub
+# 2- Créer un repository sur docker hub
+# 3- Se connecter à docker hub depuis la console linux en tapant la commande suivante:
+# docker login
+# 4- Taguer notre image avec le nom de notre repository sur docker hub en tapant la commande suivante:
+# docker tag free-code-camp-app your_docker_hub_username/your_repository_name
+# 5- Pousser notre image sur docker hub en tapant la commande suivante:
+# docker push your_docker_hub_username/your_repository_name
+# 6- Vérifier que notre image a bien été poussée sur docker hub en se connectant à notre compte sur docker hub
+# 7- Pour récupérer notre image depuis docker hub, il suffit de taper la commande suivante:
+# docker pull your_docker_hub_username/your_repository_name
