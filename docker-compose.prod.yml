@@ -16,6 +16,28 @@ services:
       # On précise l'argument à passer au dockerfile
       args:
         NODE_ENV: production
+    # Les variables d'environnement seront définies depuis notre environnement de déploiement linux
+    
+    # Voici comment définir les variables d'environnement dans linux:
+    # En mode root, tapez les commandes suivantes:
+    # export MONGO_USER=your_mongo_user
+    # export MONGO_PASSWORD=your_mongo_password
+    # export SESSION_SECRET=your_session_secret
+    # export MONGO_INITDB_ROOT_USERNAME=your_mongo_root_username
+    # export MONGO_INITDB_ROOT_PASSWORD=your_mongo_root_password
+    # Il est tout à fait possible de définir ces variables dans un fichier .env et de les charger depuis ce fichier dans notre serveur linux
+    # Ne pas mettre ce ficher dans le même dossier de notre application afin d'éviter de le pousser sur github
+    
+    # Pour voir les variables d'environnement définies, tapez la commande suivante dans la cosole linux:
+    # printenv
     environment:
       - NODE_ENV=production
+      - MONGO_USER=${MONGO_USER}
+      - MONGO_PASSWORD=${MONGO_PASSWORD}
+      - SESSION_SECRET=${SESSION_SECRET}
     command: npm start
+
+    mongo-db:
+      environment:
+        - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+        - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
