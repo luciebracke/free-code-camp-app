@@ -15,6 +15,8 @@ services:
 
   free-code-camp-app:
     build: .
+    # on précise l'immage à utiliser, image que nous avons sur notre dockerhub
+    image: luluberlute/free-code-camp-app
     environment:
       - PORT=3000
     # Nous souhaitons que le conteneur mongo-db soit lancé avant le conteneur free-code-camp-app car l'application a besoin de la base de données pour fonctionner
