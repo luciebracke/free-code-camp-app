@@ -10,6 +10,20 @@ services:
     ports:
       - 80:80
   free-code-camp-app:
+    # Mise en place de docker swarm
+    deploy:
+      # On précise combien de réplicas on veut
+      replicas: 8
+      # Mise en place de la politique de redémarrage des conteneurs
+      restart_policy:
+        # Par défaut, la politique de redémarrage est "any" qui signifie que le conteneur sera redémarré un peu pour n'importe quelle raison
+        condition: any
+      # On précise la stratégie de mise à jour des conteneurs 
+      update_config:
+        # On précise le nombre de conteneurs à mettre à jour en même temps
+        # parralelism signifie que 2 conteneurs seront mis à jour en même temps
+        parallelism: 2
+        delay: 15s
     build:
       # on précise le dossier où se trouve le dockerfile
       context: .
